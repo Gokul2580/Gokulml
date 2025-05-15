@@ -1,0 +1,75 @@
+9. KNN 
+Aim: 
+To implement k-Nearest Neighbour algorithm to classify the iris data set. Print 
+both correct and wrong predictions. 
+Algorithm: 
+Step 1: Choose the number of neighbors (K). 
+Step 2: Measure distance between the new input and all training data points 
+(commonly using Euclidean distance). 
+Step 3: Identify the K closest data points. 
+Step 4: Predict the output: 
+● Classification: Majority vote among the K neighbors. 
+● Regression: Average of the values of the K neighbors. 
+Training Samples: 
+sepal_length,sepal_width,petal_length,petal_width,species 
+5.1,3.5,1.4,0.2,setosa 
+4.9,3.0,1.4,0.2,setosa 
+4.7,3.2,1.3,0.2,setosa 
+4.6,3.1,1.5,0.2,setosa 
+5.0,3.6,1.4,0.2,setosa 
+Program: 
+from sklearn.model_selection import train_test_split 
+from sklearn.neighbors import KNeighborsClassifier 
+from sklearn.metrics import classification_report, confusion_matrix 
+from sklearn import datasets 
+iris=datasets.load_iris() 
+x = iris.data 
+y = iris.target 
+print ('sepal-length', 'sepal-width', 'petal-length', 'petal-width') 
+print(x) 
+print('class: 0-Iris-Setosa, 1- Iris-Versicolour, 2- Iris-Virginica') 
+print(y) 
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.3) 
+ 
+#To Training the model and Nearest nighbors K=5 
+classifier = KNeighborsClassifier(n_neighbors=5) 
+classifier.fit(x_train, y_train) 
+ 
+#To make predictions on our test data 
+y_pred=classifier.predict(x_test) 
+ 
+print('Confusion Matrix') 
+print(confusion_matrix(y_test,y_pred)) 
+print('Accuracy Metrics') 
+print(classification_report(y_test,y_pred)) 
+ 
+ 
+ 
+Output: 
+ 
+sepal-length sepal-width petal-length petal-width 
+ 
+class: 0-Iris-Setosa, 1- Iris-Versicolour, 2- Iris-Virginica 
+[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 
+ 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+ 2 2] 
+Confusion Matrix 
+[[15  0  0] 
+ [ 0 12  1] 
+ [ 0  0 17]] 
+Accuracy Metrics 
+        s.no   precision    recall  f1-score   support 
+ 
+           0       1.00      1.00      1.00        15 
+           1       1.00      0.92      0.96        13 
+           2       0.94      1.00      0.97        17 
+ 
+    accuracy                           0.98        45 
+   macro avg       0.98      0.97      0.98        45 
+weighted avg       0.98      0.98      0.98        45 
+ 
+Result: 
+Thus, k-Nearest Neighbour algorithm to classify the iris data set is implemented 
+along with their correct and wrong predictions.
