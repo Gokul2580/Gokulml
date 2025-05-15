@@ -1,0 +1,176 @@
+EXP NO:3   
+DATE: 
+AIM: 
+IMPLEMENTATION OF ID3 ALGORITHM  
+Write a program to demonstrate the working of the decision tree based ID3 
+algorithm. Use an appropriate data set for building the decision tree and apply this 
+knowledge to classify a new sample. 
+ALGORITHM: 
+1. Determine entropy for the overall dataset using class distribution. 
+2. For each feature. 
+● Calculate Entropy for categorical values. 
+● Assess information gain for each unique categorical value of the feature.
+ 
+3. Choose the feature that generates the highest information gain. 
+4. Iteratively apply all above steps to build the decision tree structure. 
+ 
+Training Dataset: 
+ 
+ 
+Sl. No Outlook Temperature Humidity Wind PlayTennis 
+0 Sunny Hot High Weak No 
+1 Sunny Hot High Strong No 
+2 Overcast Hot High Weak Yes 
+3 Rain Mild High Weak Yes 
+4 Rain Cool Normal Weak Yes 
+5 Rain Cool Normal Strong No 
+6 Overcast Cool Normal Strong Yes 
+7 Sunny Mild High Weak No 
+8 Sunny Cool Normal Weak Yes 
+9 Rain Mild Normal Weak Yes 
+10 Sunny Mild Normal Strong Yes 
+11 Overcast Mild High Strong Yes 
+12 Overcast Hot Normal Weak Yes 
+13 Rain Mild High Strong No 
+  
+Test Dataset: 
+ 
+Outlook Temperature Humidity Wind 
+rain cool normal strong 
+sunny mild normal strong 
+ 
+    
+PROGRAM: 
+import math 
+import csv 
+def load_csv(filename): 
+lines=csv.reader(open(filename,"r")); 
+dataset = list(lines) 
+headers = dataset.pop(0) 
+return dataset,headers 
+class Node: 
+def __init__(self,attribute): 
+self.attribute=attribute 
+self.children=[] 
+self.answer="" 
+def subtables(data,col,delete): 
+dic={} 
+coldata=[row[col] for row in data] 
+attr=list(set(coldata)) 
+counts=[0]*len(attr) 
+r=len(data) 
+c=len(data[0]) 
+for x in range(len(attr)): 
+for y in range(r): 
+if data[y][col]==attr[x]: 
+counts[x]+=1 
+for x in range(len(attr)): 
+dic[attr[x]]=[[0 for i in range(c)] for j in range(counts[x])] 
+pos=0 
+for y in range(r): 
+if data[y][col]==attr[x]: 
+if delete: 
+del data[y][col] 
+dic[attr[x]][pos]=data[y] 
+pos+=1 
+return attr,dic 
+def entropy(S): 
+attr=list(set(S)) 
+if len(attr)==1: 
+return 0 
+counts=[0,0] 
+for i in range(2): 
+counts[i]=sum([1 for x in S if attr[i]==x])/(len(S)*1.0) 
+sums=0 
+for cnt in counts: 
+sums+=-1*cnt*math.log(cnt,2) 
+return sums 
+def compute_gain(data,col): 
+attr,dic = subtables(data,col,delete=False) 
+total_size=len(data) 
+entropies=[0]*len(attr) 
+ratio=[0]*len(attr) 
+total_entropy=entropy([row[-1] for row in data]) 
+for x in range(len(attr)): 
+ratio[x]=len(dic[attr[x]])/(total_size*1.0) 
+entropies[x]=entropy([row[-1] for row in dic[attr[x]]]) 
+total_entropy-=ratio[x]*entropies[x] 
+return total_entropy 
+def build_tree(data,features): 
+lastcol=[row[-1] for row in data] 
+if(len(set(lastcol)))==1: 
+node=Node("") 
+node.answer=lastcol[0] 
+return node 
+n=len(data[0])-1 
+gains=[0]*n 
+for col in range(n): 
+gains[col]=compute_gain(data,col) 
+split=gains.index(max(gains)) 
+node=Node(features[split]) 
+fea = features[:split]+features[split+1:] 
+attr,dic=subtables(data,split,delete=True) 
+for x in range(len(attr)): 
+child=build_tree(dic[attr[x]],fea) 
+node.children.append((attr[x],child)) 
+return node 
+def print_tree(node,level): 
+if node.answer!="": 
+print("  "*level,node.answer) 
+return 
+print("  "*level,node.attribute) 
+for value,n in node.children: 
+print("  "*(level+1),value) 
+print_tree(n,level+2) 
+def classify(node,x_test,features): 
+if node.answer!="": 
+print(node.answer) 
+return 
+pos=features.index(node.attribute) 
+for value, n in node.children: 
+if x_test[pos]==value: 
+classify(n,x_test,features) 
+'''Main program''' 
+dataset,features=load_csv("id3.csv") 
+node1=build_tree(dataset,features) 
+print("The decision tree for the dataset using ID3 algorithm is") 
+print_tree(node1,0) 
+testdata,features=load_csv("id3_test.csv") 
+for xtest in testdata: 
+    print("The test instance:",xtest) 
+    print("The label for test instance:",end="   ") 
+    classify(node1,xtest,features) 
+ 
+OUTPUT: 
+ 
+The decision tree for the dataset using ID3 algorithm is as follows: 
+ 
+ Outlook 
+   sunny 
+     Humidity 
+       normal 
+         yes 
+       high 
+         no 
+   overcast 
+     yes 
+   rain 
+     Wind 
+       strong 
+         no 
+       weak 
+         Yes 
+ 
+The test instance: ['rain', 'cool', 'normal', 'strong'] 
+The label for test instance:   no 
+The test instance: ['sunny', 'mild', 'normal', 'strong'] 
+The label for test instance:   yes 
+ 
+ 
+ 
+ 
+ 
+RESULT: 
+Thus the program for the ID3 algorithm with appropriate dataset was implemented 
+and executed successfully. 
+ 
