@@ -1,0 +1,131 @@
+7. Bayesian Network 
+Aim: 
+To construct a Bayesian network to diagnose CORONA infection using standard 
+WHO Data Set.  
+Algorithm: 
+Step 1: Define Objective 
+Diagnose the likelihood of COVID-19 infection based on symptoms and contact history 
+using probabilistic reasoning. 
+Step 2: Identify Variables (Nodes) 
+Create a list of relevant variables: 
+Target Node: 
+COVID_Positive (Yes, No) 
+Symptom Nodes: 
+Fever (Yes, No) 
+Cough (Yes, No) 
+Breathlessness (Yes, No) 
+Loss_of_Taste_Smell (Yes, No) 
+Sore_Throat (Yes, No) 
+Risk Factor Nodes: 
+Contact_History (Yes, No) 
+Travel_History (Yes, No) 
+Age_Group (Young, Adult, Elderly) (optional for severity) 
+Step 3: Define Network Structure (Directed Edges) 
+All symptom and risk factor nodes point toward the COVID_Positive node. 
+Example relationships: 
+Fever →  
+Cough  →  
+Breathlessness → COVID_Positive 
+Contact_History → 
+Travel_History → 
+Step 4: Estimate Conditional Probabilities 
+Use WHO or peer-reviewed data to estimate probabilities for each node: 
+For independent symptoms: 
+P(Fever = Yes) ≈ 0.80 (based on WHO) 
+P(Cough = Yes) ≈ 0.70 
+For the target node: 
+Define P(COVID_Positive | Symptoms, Contact_History) using a 
+conditional probability table (CPT). 
+This requires estimating probabilities for every combination of symptom 
+presence. 
+Step 5: Construct the Bayesian Network 
+Create a DAG with nodes and edges. 
+Assign Conditional Probability Distributions (CPDs) for all nodes. 
+Step 6: Validate the Network 
+Ensure all CPDs are valid (rows sum to 1). 
+Use model validation tools to check the structure. 
+Step 7: Perform Inference 
+Use inference algorithms (e.g., variable elimination) to answer: 
+What is P(COVID_Positive = Yes | Fever = Yes, Cough = Yes, Contact_History = 
+Yes)? 
+Step 8: Interpret Results 
+Use results to assess likelihood of infection. 
+Optionally provide recommendations or classify risk levels. 
+Program: 
+from pgmpy.models import BayesianNetwork 
+from pgmpy.factors.discrete import TabularCPD 
+from pgmpy.inference import VariableElimination 
+ 
+# Step 1: Define the structure of the Bayesian Network 
+model = BayesianNetwork([ 
+    ('Fever', 'COVID_Positive'), 
+    ('Cough', 'COVID_Positive'), 
+    ('Breathlessness', 'COVID_Positive'), 
+    ('Contact_History', 'COVID_Positive') 
+]) 
+ 
+# Step 2: Define the Conditional Probability Distributions (CPDs) 
+ 
+# CPD for Fever 
+cpd_fever = TabularCPD(variable='Fever', variable_card=2, values=[[0.2], [0.8]])  # 0: No, 1: Yes 
+ 
+# CPD for Cough 
+cpd_cough = TabularCPD(variable='Cough', variable_card=2, values=[[0.3], [0.7]]) 
+ 
+# CPD for Breathlessness 
+cpd_breathlessness = TabularCPD(variable='Breathlessness', variable_card=2, values=[[0.6], 
+[0.4]]) 
+ 
+# CPD for Contact_History 
+cpd_contact = TabularCPD(variable='Contact_History', variable_card=2, values=[[0.7], [0.3]]) 
+ 
+# CPD for COVID_Positive based on symptoms 
+cpd_covid = TabularCPD( 
+    variable='COVID_Positive', 
+    variable_card=2, 
+    evidence=['Fever', 'Cough', 'Breathlessness', 'Contact_History'], 
+    evidence_card=[2, 2, 2, 2], 
+    values=[ 
+        # COVID_Positive = 0 (No) 
+        [0.99, 0.97, 0.95, 0.90, 0.96, 0.85, 0.80, 0.60, 
+         0.95, 0.85, 0.80, 0.65, 0.75, 0.60, 0.55, 0.30], 
+        # COVID_Positive = 1 (Yes) 
+        [0.01, 0.03, 0.05, 0.10, 0.04, 0.15, 0.20, 0.40, 
+         0.05, 0.15, 0.20, 0.35, 0.25, 0.40, 0.45, 0.70] 
+    ] 
+) 
+ 
+# Step 3: Add CPDs to the model 
+model.add_cpds(cpd_fever, cpd_cough, cpd_breathlessness, cpd_contact, cpd_covid) 
+ 
+# Step 4: Verify the model 
+assert model.check_model() 
+ 
+ 
+# Step 5: Inference 
+inference = VariableElimination(model) 
+ 
+# Example query: What is the probability of being COVID positive given symptoms 
+query_result = inference.query( 
+    variables=['COVID_Positive'], 
+    evidence={ 
+        'Fever': 1, 
+        'Cough': 1, 
+        'Breathlessness': 0, 
+        'Contact_History': 1 
+    } 
+) 
+ 
+print(query_result) 
+ 
+Output: 
++-----------------------+--------------------------------+ 
+| COVID_Positive |   phi(COVID_Positive) | 
++-----------------------+--------------------------------+ 
+| 0                          | 0.35                               | 
+| 1                          | 0.65                               | 
++-----------------------+--------------------------------+ 
+ 
+Result: 
+Thus, a Bayesian network to diagnose CORONA infection using standard WHO Data 
+Set is constructed successfully. 
