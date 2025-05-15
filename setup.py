@@ -10,6 +10,6 @@ setup(
     },
     description='GokulML Python Program Runner',
     author='Goks',
-    author_email='your@email.com',
+    author_email='dm@gokulba.in',
     keywords=['gokul', 'program runner', 'gokulml'],
 )
