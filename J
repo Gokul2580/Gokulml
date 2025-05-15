@@ -1,0 +1,68 @@
+10. Locally Weighted Regression 
+Aim: 
+To implement the non-parametric Locally Weighted Regression algorithm in order 
+to fit data points and to select an appropriate data set to draw graphs.   
+Algorithm: 
+Training Samples: 
+1. Set the seed for NumPy's random number generator to 0 
+2. Generate 100 evenly spaced values between 0 and 10. 
+3. Add Gaussian noise (random noise) to simulate real-world data using 0.3 * 
+np.random.randn(100). 
+● np.random.randn(100) generates 100 random numbers from a standard 
+normal distribution. 
+● Multiplying by 0.3 scales the noise. 
+Program: 
+import numpy as np 
+import matplotlib.pyplot as plt 
+def kernel(x0, x, tau): 
+"""Returns weights using a Gaussian kernel centered at x0""" 
+ 
+    return np.exp(-np.sum((x - x0)**2, axis=1) / (2 * tau**2)) 
+ 
+def locally_weighted_regression(x, y, tau, x_query): 
+    """Predict y for each x_query using Locally Weighted Linear Regression""" 
+    m = x.shape[0] 
+    x = np.c_[np.ones(m), x]  # Add bias term 
+    y = y.reshape(-1, 1) 
+ 
+    y_pred = [] 
+ 
+    for x0 in x_query: 
+        x0 = np.r_[1, x0]  # Add bias 
+        weights = np.diag(kernel(x0, x, tau)) 
+        theta = np.linalg.pinv(x.T @ weights @ x) @ x.T @ weights @ y 
+        y_hat = x0 @ theta 
+        y_pred.append(y_hat) 
+ 
+    return np.array(y_pred).flatten() 
+ 
+# Example data 
+np.random.seed(0) 
+x = np.linspace(0, 10, 100) 
+y = np.sin(x) + 0.3 * np.random.randn(100) 
+x = x.reshape(-1, 1) 
+ 
+# Query points 
+x_query = np.linspace(0, 10, 200).reshape(-1, 1) 
+ 
+# Apply LWR 
+tau = 0.5  # bandwidth parameter 
+y_pred = locally_weighted_regression(x, y, tau, x_query) 
+ 
+# Plot 
+plt.scatter(x, y, color='blue', label='Data', alpha=0.5) 
+plt.plot(x_query, y_pred, color='red', label='LWR Fit') 
+plt.title('Locally Weighted Regression (tau={tau})') 
+plt.legend() 
+plt.show() 
+ 
+ 
+ 
+ 
+ 
+ 
+Output: 
+Result: 
+Thus, the non-parametric Locally Weighted Regression algorithm in order to fit 
+data points is implemented and an appropriate data set to draw graphs is 
+selected.  
