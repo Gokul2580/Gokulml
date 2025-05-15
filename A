@@ -1,1 +1,67 @@
-https://raw.githubusercontent.com/Gokul2580/Gokulml/refs/heads/main/1.py
+EXP NO:1 IMPLEMENTATION OF FIND-S ALGORITHM
+DATE:
+AIM:
+To implement and demonstrate the FIND-S algorithm for finding the most specific
+hypothesis based on a given set of training data samples.
+ALGORITHM:
+1. Initialize h to the most specific hypothesis in H
+2. For each positive training instance x
+For each attribute constraint ai in h
+If the constraint ai is satisfied by x
+Then do nothing
+Else replace ai in h by the next more general constraint that is satisfied
+by x
+3. Output hypothesis h
+Training Sample:
+Example Sky AirTemp Humidity Wind Water Forecast EnjoySport
+1 sunny warm normal strong warm same yes
+2 sunny warm high strong warm same yes
+3 rainy cold high strong warm change no
+4 sunny warm high strong cool change yes
+
+PROGRAM:
+
+import csv
+a = []
+with open('enjoysport.csv', 'r') as csvfile:
+ for row in csv.reader(csvfile):
+ a.append(row)
+ print(a)
+print("\n The total number of training instances are : ",len(a))
+num_attribute = len(a[0])-1
+print("\n The initial hypothesis is : ")
+hypothesis = ['0']*num_attribute
+print(hypothesis)
+for i in range(0, len(a)):
+ if a[i][num_attribute] == 'yes':
+ for j in range(0, num_attribute):
+ if hypothesis[j] == '0' or hypothesis[j] == a[i][j]:
+ hypothesis[j] = a[i][j]
+ else:
+ hypothesis[j] = '?'
+ print("\n The hypothesis for the training instance {} is : \n" .format(i+1),hypothesis)
+print("\n The Maximally specific hypothesis for the training instance is ")
+print(hypothesis)
+
+OUTPUT:
+The Given Training Data Set
+['sunny', 'warm', 'normal', 'strong', 'warm', 'same', 'yes']
+['sunny', 'warm', 'high', 'strong', 'warm', 'same', 'yes']
+['rainy', 'cold', 'high', 'strong', 'warm', 'change', 'no']
+['sunny', 'warm', 'high', 'strong', 'cool', 'change', 'yes']
+The total number of training instances are : 4
+The initial hypothesis is :
+['0', '0', '0', '0', '0', '0']
+The hypothesis for the training instance 1 is :
+['sunny', 'warm', 'normal', 'strong', 'warm', 'same']
+The hypothesis for the training instance 2 is :
+['sunny', 'warm', '?', 'strong', 'warm', 'same']
+The hypothesis for the training instance 3 is :
+['sunny', 'warm', '?', 'strong', 'warm', 'same']
+The hypothesis for the training instance 4 is :
+['sunny', 'warm', '?', 'strong', '?', '?']
+The Maximally specific hypothesis for the training instance is
+['sunny', 'warm', '?', 'strong', '?', '?']
+RESULT:
+Thus the program for Find S algorithm with a training dataset was implemented and
+executed successfully.
