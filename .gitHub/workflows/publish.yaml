@@ -1,5 +1,4 @@
-name: Publish to PyPI
-
+name: Gokulml
 on:
   push:
     tags:
