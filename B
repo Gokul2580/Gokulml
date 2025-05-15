@@ -1,0 +1,119 @@
+EXP NO: 2 IMPLEMENTATION OF CANDIDATE ELIMINATION ALGORITHM  
+DATE: 
+AIM: 
+To implement and demonstrate the Candidate-Elimination algorithm to output a 
+description of the set of all hypotheses consistent with the training examples.  
+ALGORITHM: 
+1. Load Data set 
+2. Initialize General Hypothesis  and Specific  Hypothesis. 
+3. For each training example   
+4. If example is positive example   
+if attribute_value == hypothesis_value: 
+Do nothing 
+Else: 
+Replace attribute value with '?' (Basically generalizing it) 
+5. If example is Negative example 
+Make the generic hypothesis more specific. 
+Training Sample: 
+Example 
+1 
+Sky 
+AirTemp Humidity Wind  Water Forecast EnjoySport 
+sunny warm normal strong warm same 
+2 
+3 
+4 
+sunny warm high 
+rainy 
+cold 
+sunny warm high 
+yes 
+strong warm same 
+high 
+strong warm change 
+strong cool change 
+yes 
+no 
+yes 
+PROGRAM: 
+ 
+import numpy as np  
+import pandas as pd 
+ 
+data = pd.read_csv('enjoysport.csv') 
+concepts = np.array(data.iloc[:,0:-1]) 
+print(concepts)  
+target = np.array(data.iloc[:,-1])   
+print(target) 
+def learn(concepts, target):  
+    specific_h = concepts[0].copy()      
+    print("initialization of specific_h and general_h")      
+    print(specific_h)   
+    general_h = [["?" for i in range(len(specific_h))] for i in range(len(specific_h))]      
+    print(general_h)   
+ 
+    for i, h in enumerate(concepts): 
+        print("For Loop Starts") 
+        if target[i] == "yes": 
+            print("If instance is Positive ") 
+            for x in range(len(specific_h)):  
+                if h[x]!= specific_h[x]:                     
+                    specific_h[x] ='?'                      
+                    general_h[x][x] ='?' 
+                    
+        if target[i] == "no":             
+            print("If instance is Negative ") 
+            for x in range(len(specific_h)):  
+                if h[x]!= specific_h[x]:                     
+                    general_h[x][x] = specific_h[x]                 
+                else:                     
+                    general_h[x][x] = '?'         
+ 
+        print(" steps of Candidate Elimination Algorithm",i+1)         
+        print(specific_h)          
+        print(general_h) 
+        print("\n") 
+        print("\n") 
+ 
+    indices = [i for i, val in enumerate(general_h) if val == ['?', '?', '?', '?', '?', '?']]     
+    for i in indices:    
+        general_h.remove(['?', '?', '?', '?', '?', '?'])  
+    return specific_h, general_h  
+ 
+s_final, g_final = learn(concepts, target) 
+ 
+print("Final Specific_h:", s_final, sep="\n") 
+print("Final General_h:", g_final, sep="\n") 
+ 
+ 
+OUTPUT: 
+Initially : G = [[?, ?, ?, ?, ?, ?], [?, ?, ?, ?, ?, ?], [?, ?, ?, ?, ?, ?],  
+                 [?, ?, ?, ?, ?, ?], [?, ?, ?, ?, ?, ?], [?, ?, ?, ?, ?, ?]] 
+            S = [Null, Null, Null, Null, Null, Null] 
+             
+For instance 1 : <'sunny','warm','normal','strong','warm ','same'> and positive output. 
+            G1 = G 
+            S1 = ['sunny','warm','normal','strong','warm ','same'] 
+             
+For instance 2 : <'sunny','warm','high','strong','warm ','same'> and positive output. 
+            G2 = G 
+            S2 = ['sunny','warm',?,'strong','warm ','same'] 
+             
+For instance 3 : <'rainy','cold','high','strong','warm ','change'> and negative output. 
+            G3 = [['sunny', ?, ?, ?, ?, ?], [?, 'warm', ?, ?, ?, ?], [?, ?, ?, ?, ?, ?],  
+                  [?, ?, ?, ?, ?, ?], [?, ?, ?, ?, ?, ?], [?, ?, ?, ?, ?, 'same']] 
+            S3 = S2      
+             
+For instance 4 : <'sunny','warm','high','strong','cool','change'> and positive output. 
+            G4 = G3 
+            S4 = ['sunny','warm',?,'strong', ?, ?]        
+   
+At last, by synchronizing  the G4 and S4 algorithm produces the final output as follows: 
+ 
+G (Generic) = [['sunny', ?, ?, ?, ?, ?], [?, 'warm', ?, ?, ?, ?]] 
+S (Specific) = ['sunny','warm',?,'strong', ?, ?] 
+ 
+ 
+RESULT: 
+Thus the Candidate Elimination Algorithm with a training dataset was implemented 
+and executed successfully 
